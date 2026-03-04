@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta http-equiv="Content-Security-Policy" content="img-src * data: blob:;">
+<title>OW2 Composition Cheat Sheet</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0e17;
+    color: #e0e6ed;
+    padding: 20px;
+  }
+
+  h1.page-title {
+    font-family: 'Rajdhani', sans-serif;
+    text-align: center;
+    font-size: 2.8em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #f89c1c, #ff6b00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #6b7a8d;
+    margin-bottom: 30px;
+    font-size: 0.9em;
+  }
+
+  /* NAV TABS */
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .nav button {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    border: 2px solid #2a3444;
+    border-radius: 8px;
+    background: #131a26;
+    color: #8899aa;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav button:hover { border-color: #f89c1c; color: #f89c1c; }
+  .nav button.active { background: #f89c1c; color: #0a0e17; border-color: #f89c1c; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* COMP CARDS */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .comp-card {
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .comp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.1;
+    z-index: 0;
+  }
+  .comp-card > * { position: relative; z-index: 1; }
+
+  .comp-dive { background: linear-gradient(135deg, #1a1a3e, #0d2847); border: 1px solid #2255aa55; }
+  .comp-brawl { background: linear-gradient(135deg, #3e1a1a, #471a0d); border: 1px solid #aa225555; }
+  .comp-poke { background: linear-gradient(135deg, #1a3e2a, #0d4720); border: 1px solid #22aa5555; }
+  .comp-rush { background: linear-gradient(135deg, #2a1a3e, #1a0d47); border: 1px solid #8855cc55; }
+  .comp-bunker { background: linear-gradient(135deg, #2a2a1a, #47400d); border: 1px solid #aaaa2255; }
+  .comp-pocket { background: linear-gradient(135deg, #3e1a2e, #470d30); border: 1px solid #cc559955; }
+  .comp-counter { background: linear-gradient(135deg, #2a2a1a, #47400d); border: 1px solid #aaaa2255; }
+
+  .comp-card h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .comp-dive h2 { color: #4499ff; }
+  .comp-brawl h2 { color: #ff4444; }
+  .comp-poke h2 { color: #44dd77; }
+  .comp-rush h2 { color: #aa77ee; }
+  .comp-bunker h2 { color: #ddcc44; }
+  .comp-pocket h2 { color: #ee66aa; }
+  .comp-counter h2 { color: #f89c1c; }
+
+  .comp-card .analogy {
+    font-size: 1.05em;
+    font-weight: 500;
+    color: #ccd;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .comp-roles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .comp-role {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+  }
+  .role-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    min-width: 65px;
+    text-align: center;
+  }
+  .tag-tank { background: #2266bb; color: #fff; }
+  .tag-dps { background: #bb3333; color: #fff; }
+  .tag-sup { background: #33aa55; color: #fff; }
+
+  .comp-when {
+    margin-top: 12px;
+    font-size: 0.85em;
+    color: #8899aa;
+    line-height: 1.5;
+  }
+  .comp-when strong { color: #ccd; }
+
+  .counter-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4em;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 10px 0;
+  }
+  .counter-flow .beats { color: #f89c1c; font-size: 1.2em; }
+  .cf-dive { color: #4499ff; }
+  .cf-brawl { color: #ff4444; }
+  .cf-poke { color: #44dd77; }
+
+  /* HERO CARDS */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+  }
+
+  .hero-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .hero-card:hover { transform: translateY(-3px); }
+
+  .hero-card.tank { background: linear-gradient(180deg, #1a2a4a, #111a2e); border: 1px solid #2266bb44; }
+  .hero-card.dps { background: linear-gradient(180deg, #3a1a1a, #2e1115); border: 1px solid #bb333344; }
+  .hero-card.support { background: linear-gradient(180deg, #1a3a2a, #112e1a); border: 1px solid #33aa5544; }
+
+  .hero-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    position: relative;
+  }
+
+  .hero-portrait {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid #ffffff22;
+    background: #0005;
+    flex-shrink: 0;
+  }
+
+  .hero-info h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .tank .hero-info h2 { color: #4499ff; }
+  .dps .hero-info h2 { color: #ff6655; }
+  .support .hero-info h2 { color: #44dd77; }
+
+  .hero-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .tier-badge {
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.8em;
+    text-transform: uppercase;
+  }
+  .tier-s { background: #f89c1c; color: #000; }
+  .tier-a { background: #8855cc; color: #fff; }
+  .tier-b { background: #3366aa; color: #fff; }
+  .tier-c { background: #555; color: #ccc; }
+
+  .comp-badge {
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+    background: #ffffff11;
+    color: #8899aa;
+    border: 1px solid #ffffff15;
+  }
+
+  .hero-tip {
+    background: #ffffff08;
+    padding: 12px 20px;
+    margin: 0 16px;
+    border-radius: 10px;
+    border-left: 3px solid #f89c1c;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: #dde;
+    font-weight: 500;
+  }
+
+  .hero-body {
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .hero-section {
+    background: #ffffff06;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .hero-section h4 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .sec-good h4 { color: #44dd77; }
+  .sec-bad h4 { color: #ff5555; }
+  .sec-you-counter h4 { color: #4499ff; }
+  .sec-tips h4 { color: #f89c1c; }
+
+  .hero-list {
+    list-style: none;
+    font-size: 0.82em;
+    line-height: 1.7;
+    color: #aabbcc;
+  }
+  .hero-list li::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .sec-good .hero-list li::before { background: #44dd77; }
+  .sec-bad .hero-list li::before { background: #ff5555; }
+  .sec-you-counter .hero-list li::before { background: #4499ff; }
+  .sec-tips .hero-list li::before { background: #f89c1c; }
+
+  .hero-footer {
+    padding: 0 20px 16px;
+  }
+
+  /* TIPS SECTION */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .tip-card {
+    background: linear-gradient(135deg, #1a2233, #131a26);
+    border: 1px solid #2a3444;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .tip-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2em;
+    font-weight: 700;
+    color: #f89c1c;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .tip-text {
+    font-size: 0.92em;
+    line-height: 1.5;
+    color: #ccd;
+  }
+  .tip-text strong { color: #fff; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    body { padding: 10px; }
+    h1.page-title { font-size: 1.8em; letter-spacing: 2px; }
+    .nav { gap: 4px; }
+    .nav button { padding: 8px 12px; font-size: 0.8em; }
+    .comp-grid { grid-template-columns: 1fr; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-body { grid-template-columns: 1fr; }
+    .hero-portrait { width: 60px; height: 60px; }
+    .hero-info h2 { font-size: 1.2em; }
+    .hero-tip { font-size: 0.85em; padding: 10px 14px; margin: 0 10px; }
+    .hero-body { padding: 12px 14px; }
+    .counter-flow { font-size: 1.1em; }
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; color: #111; }
+    .nav { display: none; }
+    .tab-content { display: block !important; page-break-before: always; }
+    .hero-card { break-inside: avoid; border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Overwatch 2 Cheat Sheet</h1>
+<p class="subtitle">Reign of Talon Season 1 Meta | Bronze-Silver Focus</p>
+
+<div class="nav">
+  <button class="active" onclick="showTab('tierlist',this)">Tier List</button>
+  <button onclick="showTab('comps',this)">Compositions</button>
+  <button onclick="showTab('tanks',this)">Tanks</button>
+  <button onclick="showTab('dps',this)">DPS</button>
+  <button onclick="showTab('supports',this)">Supports</button>
+  <button onclick="showTab('swaps',this)">When to Swap</button>
+  <button onclick="showTab('ultcombos',this)">Ult Combos</button>
+  <button onclick="showTab('maps',this)">Map Tips</button>
+  <button onclick="showTab('counters',this)">Counters</button>
+  <button onclick="showTab('tips',this)">Survival Guide</button>
+</div>
+
+<!-- ==================== TIER LIST ==================== -->
+<div id="tierlist" class="tab-content active">
+
+  <!-- SUB-TABS -->
+  <div style="display:flex; justify-content:center; gap:8px; margin-bottom:24px;">
+    <button onclick="showSubTab('my-heroes','all-heroes',this)" class="active" style="font-family:'Rajdhani',sans-serif; font-size:0.95em; font-weight:600; text-transform:uppercase; letter-spacing:1px; padding:8px 20px; border:2px solid #f89c1c; border-radius:8px; background:#f89c1c; color:#0a0e17; cursor:pointer; transition:all 0.2s;">My Heroes</button>
+    <button onclick="showSubTab('all-heroes','my-heroes',this)" style="font-family:'Rajdhani',sans-serif; font-size:0.95em; font-weight:600; text-transform:uppercase; letter-spacing:1px; padding:8px 20px; border:2px solid #2a3444; border-radius:8px; background:#131a26; color:#8899aa; cursor:pointer; transition:all 0.2s;">All Heroes</button>
+  </div>
+
+  <!-- TIER KEY -->
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:28px;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="display:inline-block; width:40px; text-align:center; padding:4px 0; border-radius:6px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.9em; background:#f89c1c; color:#000;">S</span>
+      <span style="color:#aabbcc; font-size:0.85em;">Dominant. Works in almost every situation.</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="display:inline-block; width:40px; text-align:center; padding:4px 0; border-radius:6px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.9em; background:#8855cc; color:#fff;">A</span>
+      <span style="color:#aabbcc; font-size:0.85em;">Strong. Great in the right comp or map.</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="display:inline-block; width:40px; text-align:center; padding:4px 0; border-radius:6px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.9em; background:#3366aa; color:#fff;">B</span>
+      <span style="color:#aabbcc; font-size:0.85em;">Solid. Needs the right team or matchup.</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="display:inline-block; width:40px; text-align:center; padding:4px 0; border-radius:6px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.9em; background:#555; color:#ccc;">C</span>
+      <span style="color:#aabbcc; font-size:0.85em;">Situational. Other heroes usually do better.</span>
+    </div>
+  </div>
+
+  <!-- ===== MY HEROES ===== -->
+  <div id="my-heroes">
+    <!-- S TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#f89c1c; color:#000;">S</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#f89c1c;">Dominant Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/dva/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">D.VA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Poke / All</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Fits every comp. Matrix eats ults. Best flex tank.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/ashe/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">ASHE</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Outclasses Widow in versatility. Dynamite + B.O.B. dominate.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/bastion/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">BASTION</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Highest raw DPS. Shreds barriers. HP buffed to 250.</span>
+        </div>
+      </div>
+    </div>
+    <!-- A TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#8855cc; color:#fff;">A</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#8855cc;">Strong Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2158c4ef60904ca5/692f5b036da53018ad07b253/960_Vendetta.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc; object-fit:cover;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">VENDETTA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Melee assassin. Insane burst up close. Hard to track.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7e4477830e3fd772/668db075c02e3c1d615743f7/960_Juno_v2.jpg" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc; object-fit:cover;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">JUNO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Speed boost + heals. Great aggro support. High skill ceiling.</span>
+        </div>
+      </div>
+    </div>
+    <!-- B TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#3366aa; color:#fff;">B</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#3366aa;">Solid Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/winston/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">WINSTON</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Great dive initiator. Needs team follow-up to get value.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/reaper/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">REAPER</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Tank buster. Huge self-heal. Predictable at range though.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/mercy/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">MERCY</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Pocket</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Damage boost wins fights. Rez is game-changing. Low solo heal.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/zenyatta/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">ZENYATTA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Discord melts targets. Huge damage. Very fragile, needs peel.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/moira/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">MOIRA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Easy to play. Great AoE heals. Low utility, just heals and damage.</span>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/ana/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">ANA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ffffff22; color:#aab; font-weight:500;">All Comps</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Highest skill ceiling support. Anti-nade is broken. Hard to aim.</span>
+        </div>
+      </div>
+    </div>
+    <!-- C TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#555; color:#ccc;">C</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#777;">Situational</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/orisa/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">ORISA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Tanky but slow. Easily kited. D.Va does her job better right now.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALL HEROES ===== -->
+  <div id="all-heroes" style="display:none;">
+
+    <!-- ROLE FILTER -->
+    <div style="display:flex; justify-content:center; gap:8px; margin-bottom:20px;">
+      <button onclick="filterRole('all',this)" class="active" style="font-family:'Rajdhani',sans-serif; font-size:0.85em; font-weight:600; padding:6px 14px; border:1px solid #ffffff22; border-radius:6px; background:#ffffff15; color:#ccd; cursor:pointer;">All</button>
+      <button onclick="filterRole('tank',this)" style="font-family:'Rajdhani',sans-serif; font-size:0.85em; font-weight:600; padding:6px 14px; border:1px solid #2266bb44; border-radius:6px; background:#2266bb22; color:#4499ff; cursor:pointer;">Tanks</button>
+      <button onclick="filterRole('dps',this)" style="font-family:'Rajdhani',sans-serif; font-size:0.85em; font-weight:600; padding:6px 14px; border:1px solid #bb333344; border-radius:6px; background:#bb333322; color:#ff6655; cursor:pointer;">DPS</button>
+      <button onclick="filterRole('sup',this)" style="font-family:'Rajdhani',sans-serif; font-size:0.85em; font-weight:600; padding:6px 14px; border:1px solid #33aa5544; border-radius:6px; background:#33aa5522; color:#44dd77; cursor:pointer;">Support</button>
+    </div>
+
+    <!-- ALL S TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#f89c1c; color:#000;">S</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#f89c1c;">Dominant Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/dva/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">D.VA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Poke / All</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Fits every comp. Matrix eats ults. Best flex tank.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/zarya/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">ZARYA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Bubble utility is massive. High energy = monster damage.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/82b8c1b8765dcb9a0ba16e343c3516bf324c771ac81e9878473280216e70a889.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">SOJOURN</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / All</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Railgun burst is oppressive. Better Soldier with one-shot potential.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/tracer/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">TRACER</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Queen of dive. Blink + Recall makes her impossible to catch.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/408603fe037e8576078eaac5eab2fb251489ced4003b11f5f522776d43d0b83d.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">KIRIKO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ffffff22; color:#aab; font-weight:500;">All Comps</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Suzu cleanses everything. Fits every comp on every map.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/lucio/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #f89c1c;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">LUCIO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#8855cc33; color:#aa77ee; font-weight:500;">Rush / Dive / All</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Speed aura defines fight tempo. Sound Barrier saves teams.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL A TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#8855cc; color:#fff;">A</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#8855cc;">Strong Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/sigma/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">SIGMA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Barrier control + Accretion stun. Dominates sightlines.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/winston/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">WINSTON</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Jump Pack + bubble creates space. Devastating with follow-up.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2158c4ef60904ca5/692f5b036da53018ad07b253/960_Vendetta.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc; object-fit:cover;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">VENDETTA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Melee assassin. Insane burst up close. Hard to track.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/ashe/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">ASHE</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Dynamite + B.O.B. provide huge value. Versatile hitscan.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/bastion/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">BASTION</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Highest raw DPS in the game. Shreds barriers and tanks.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/echo/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">ECHO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Flying DPS threat. Duplicate ult is game-changing flexibility.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/genji/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">GENJI</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Dragonblade team wipes. Swift Strike resets snowball fights.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/cassidy/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">CASSIDY</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Magnetic Grenade burst. Deadeye zones. Reliable hitscan.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/ana/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">ANA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ffffff22; color:#aab; font-weight:500;">All Comps</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Anti-nade and Sleep are the best cooldowns in the game.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/baptiste/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">BAPTISTE</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Immortality Field is a mini-ult on cooldown. Great damage too.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7e4477830e3fd772/668db075c02e3c1d615743f7/960_Juno_v2.jpg" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc; object-fit:cover;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">JUNO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Speed + heals combo. Strong aggro support with high ceiling.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/ce42d1455e03e79f321345fea84b27a8918b5db8bd7ab9b2ca9e569606ede9e4.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #8855cc;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">ILLARI</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">DPS-level damage output. Healing Pylon provides passive sustain.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL B TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#3366aa; color:#fff;">B</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#3366aa;">Solid Picks</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/reinhardt/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">REINHARDT</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Iconic brawler. Shield + Hammer on tight maps. Struggles closing distance.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/06eeecb359f311f43a8f5121d4f9f3a93c565d70b30e94ef543c05596c9a39dc.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">JUNKER QUEEN</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Aggressive frontliner. Commanding Shout + Rampage win close fights.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/33d39bb439c08975197fc52eff4874716839711b5356c4fdc174f9c24bac1d0e.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">MAUGA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Dual chainguns go brr. Simple but effective. Selfish playstyle.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/orisa/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">ORISA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Fortify is strong but too slow for the current meta. Easily kited.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/wrecking-ball/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">WRECKING BALL</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Chaos machine. High ceiling but needs team built around him.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/soldier-76/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">SOLDIER: 76</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke / All</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Self-sufficient. Sprint + Biotic Field. Reliable but outclassed by Sojourn.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/hanzo/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">HANZO</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Storm Arrows + Sonic Arrow utility. Less consistent than hitscan.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/pharah/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">PHARAH</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ee66aa33; color:#ee66aa; font-weight:500;">Pocket / Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Aerial dominance in low ranks. Needs Mercy pocket. Hitscan shuts her down.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/reaper/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">REAPER</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Tank buster. Huge self-heal. Predictable at range though.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/mei/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">MEI</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Ice Wall isolations are devastating. Niche but valuable at chokes.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/symmetra/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">SYMMETRA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Teleporter utility. Beam scales to monster damage up close.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/widowmaker/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">WIDOWMAKER</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">One-shot potential defines her ceiling. High risk, high reward.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/dcab9123f5f55df22e54d4e797de43c71b917e0149dd059a7fd6136f48464cd0.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">VENTURE</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive / Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Drill Dash + Burrow. Unique engage style. Inconsistent impact.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/mercy/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">MERCY</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ee66aa33; color:#ee66aa; font-weight:500;">Pocket / Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Damage boost + Rez are powerful. Vulnerable when focused.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/zenyatta/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">ZENYATTA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Discord Orb is the best debuff in OW2. Glass cannon though.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/brigitte/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">BRIGITTE</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Rush</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Shield Bash + Rally = frontline sustain. Struggles vs poke.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/moira/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #3366aa;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">MOIRA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Easy to play. Great AoE heals. Low utility compared to others.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL C TIER -->
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <span style="display:inline-block; width:50px; text-align:center; padding:8px 0; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1.6em; background:#555; color:#ccc;">C</span>
+        <span style="font-family:'Rajdhani',sans-serif; font-size:1.1em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#777;">Situational</span>
+      </div>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; padding-left:62px;">
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/ddef7c9fb8ce4256e8508196b486f81950efe7aaa6cf27fec4668beb4cd15774.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">RAMATTRA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Form-switching is cool but outclassed by other brawl tanks.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/doomfist/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">DOOMFIST</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">High-risk dive tank. Feast or famine. Struggles to provide value consistently.</span>
+        </div>
+        <div class="th tank" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/roadhog/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#4499ff;">ROADHOG</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Hook gets picks but selfish. No team utility. Ult charge battery.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/torbjorn/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">TORBJORN</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ddcc4433; color:#ddcc44; font-weight:500;">Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Turret folds vs coordinated teams. Molten Core is his only real threat.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/junkrat/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">JUNKRAT</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#ff444433; color:#ff4444; font-weight:500;">Brawl / Bunker</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Fun but predictable. Spam damage. Easily countered by mobile heroes.</span>
+        </div>
+        <div class="th dps" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://blzgdapipro-a.akamaihd.net/hero/sombra/icon-portrait.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#ff6655;">SOMBRA</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#4499ff33; color:#4499ff; font-weight:500;">Dive</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Hack utility is niche. Only a counter-pick, not standalone viable.</span>
+        </div>
+        <div class="th sup" style="display:flex; flex-direction:column; align-items:center; gap:4px; width:110px;">
+          <img src="https://d15f34w2p8l1cc.cloudfront.net/overwatch/3376515cebed0904012e67e956f6d1b9c12e03da642845eeaf787b7e4c7b339d.png" style="width:72px; height:72px; border-radius:12px; border:2px solid #555;">
+          <span style="font-family:'Rajdhani',sans-serif; font-weight:600; font-size:0.85em; color:#44dd77;">LIFEWEAVER</span>
+          <span style="font-size:0.6em; padding:1px 6px; border-radius:3px; background:#44dd7733; color:#44dd77; font-weight:500;">Poke</span>
+          <span style="font-size:0.65em; color:#667; text-align:center; line-height:1.3; margin-top:2px;">Reactive kit in a proactive meta. Almost always a better pick available.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#ffffff06; border-radius:12px; padding:16px 20px; margin-top:20px;">
+    <p style="font-size:0.85em; color:#667; text-align:center; line-height:1.6;">
+      Tiers are based on the current Reign of Talon Season 1 meta. At <strong style="color:#aab;">Bronze-Silver</strong>, hero mastery matters more than tier placement. A B-tier hero you know well will outperform an S-tier hero you just picked up. These tiers reflect general strength and versatility across maps and team comps.
+    </p>
+  </div>
+
+</div>
+
+<!-- ==================== COMPOSITIONS ==================== -->
+<div id="comps" class="tab-content">
+  <div class="comp-grid">
+
+    <div class="comp-card comp-dive">
+      <h2>Dive</h2>
+      <p class="analogy">"Pack of wolves. Pick one target, everyone jumps, get the kill, get out."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> Winston, D.Va, Wrecking Ball</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Vendetta, Tracer, Genji, Sombra, Pharah</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Kiriko, Juno, Mercy, Lucio</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> Enemy has exposed supports. Open maps with angles.<br>
+        <strong>Don't run it when:</strong> Enemy has Brig/Moira peel. Tight corridors.
+      </div>
+    </div>
+
+    <div class="comp-card comp-brawl">
+      <h2>Brawl</h2>
+      <p class="analogy">"Rugby scrum. Everyone together, crash in, overwhelm with sustain."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> Rein, Zarya, JQ, Orisa</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Reaper, Bastion, Mei, Sym, Vendetta</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Lucio, Moira, Brig, Ana</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> Tight choke maps (King's Row). Enemy is squishy.<br>
+        <strong>Don't run it when:</strong> Open sightlines. Enemy pokes you down before you close the gap.
+      </div>
+    </div>
+
+    <div class="comp-card comp-poke">
+      <h2>Poke</h2>
+      <p class="analogy">"Sniper team. Chip them from range, push when they're half dead."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> Sigma, D.Va, Orisa, Domina</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Ashe, Hanzo, Soldier, Sojourn, Widow, Bastion</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Ana, Zen, Baptiste</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> Long sightlines (Junkertown, Circuit Royal). Enemy runs brawl.<br>
+        <strong>Don't run it when:</strong> Enemy dives you. Tight maps. DPS can't hit shots.
+      </div>
+    </div>
+
+    <div class="comp-card comp-rush">
+      <h2>Rush</h2>
+      <p class="analogy">"Brawl's faster cousin. Speed boost in, overwhelm before they can set up."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> D.Va, Winston, Zarya, JQ</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Vendetta, Reaper, Tracer, Mei</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Lucio + Juno, Moira, Brig</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> You have Lucio + Juno for double speed. Enemy is slow or static.<br>
+        <strong>Don't run it when:</strong> Enemy has lots of CC (stuns, slows). Long sightline maps.<br>
+        <strong>Key difference from Brawl:</strong> Rush uses speed to engage fast. Brawl walks in and sustains. Rush is about the initial hit; brawl is about the grind.
+      </div>
+    </div>
+
+    <div class="comp-card comp-bunker">
+      <h2>Bunker</h2>
+      <p class="analogy">"A fortress. Plant yourself on a strong position and make the enemy come to you."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> Orisa, Sigma, Ramattra</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Bastion, Torbjorn, Soldier, Ashe</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Baptiste, Ana, Zen</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> Defending a point. Maps with strong high ground positions. Enemy keeps running into you.<br>
+        <strong>Don't run it when:</strong> Enemy runs dive (they bypass your setup). You need to push through open ground.<br>
+        <strong>Key difference from Poke:</strong> Poke moves and repositions. Bunker plants and holds one spot. Poke is mobile; bunker is a fortress.
+      </div>
+    </div>
+
+    <div class="comp-card comp-pocket">
+      <h2>Pocket</h2>
+      <p class="analogy">"Bodyguard comp. One support dedicates everything to one carry DPS."</p>
+      <div class="comp-roles">
+        <div class="comp-role"><span class="role-tag tag-tank">Tank</span> D.Va (peels for pocket duo)</div>
+        <div class="comp-role"><span class="role-tag tag-dps">DPS</span> Ashe, Pharah, Sojourn, Echo</div>
+        <div class="comp-role"><span class="role-tag tag-sup">Sup</span> Mercy (pocket) + Ana/Moira (team heals)</div>
+      </div>
+      <div class="comp-when">
+        <strong>Run it when:</strong> Your DPS is popping off and can carry with damage boost. Pharah-Mercy is the classic example.<br>
+        <strong>Don't run it when:</strong> Enemy dives the pocket duo. Your DPS isn't converting the boost into kills.<br>
+        <strong>Key detail:</strong> This isn't a full comp, it's a strategy within other comps. Mercy pockets Ashe while the rest of the team plays poke or dive around them.
+      </div>
+    </div>
+
+    <div class="comp-card comp-counter">
+      <h2>Rock-Paper-Scissors</h2>
+      <div class="counter-flow">
+        <span class="cf-dive">Dive</span>
+        <span class="beats">&gt;</span>
+        <span class="cf-poke">Poke</span>
+        <span class="beats">&gt;</span>
+        <span class="cf-brawl">Brawl</span>
+        <span class="beats">&gt;</span>
+        <span class="cf-dive">Dive</span>
+      </div>
+      <p style="text-align:center; color:#8899aa; font-size:0.9em; margin-top:8px;">
+        If the enemy switches comp style, you need to switch too.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== TANKS ==================== -->
+<div id="tanks" class="tab-content">
+  <div class="hero-grid">
+
+    <!-- WINSTON -->
+    <div class="hero-card tank">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/winston/icon-portrait.png" alt="Winston">
+        <div class="hero-info">
+          <h2>Winston</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">Dive</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">You're an assassin, not a brawler. Jump in, bubble, kill the support, jump out. No escape = don't go in.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Tracer / Genji</li>
+            <li>Kiriko</li>
+            <li>Ana (Nano)</li>
+            <li>D.Va</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Reaper</li>
+            <li>Bastion</li>
+            <li>Roadhog</li>
+            <li>Ana (Sleep)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Widowmaker</li>
+            <li>Zenyatta</li>
+            <li>Ashe</li>
+            <li>Hanzo</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Save jump for escape</li>
+            <li>Primal = survival tool</li>
+            <li>Target isolated supports</li>
+            <li>Backline, not frontline</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORISA -->
+    <div class="hero-card tank">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/orisa/icon-portrait.png" alt="Orisa">
+        <div class="hero-info">
+          <h2>Orisa</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-c">C Tier</span>
+            <span class="comp-badge">Brawl / Bunker</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">You are the wall. Hold your ground. Fortify is your panic button. Javelin Spin forward pushes through chokes.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Bastion</li>
+            <li>Baptiste</li>
+            <li>Ana (Nano)</li>
+            <li>Moira</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Zarya</li>
+            <li>D.Va</li>
+            <li>Sombra</li>
+            <li>Reaper</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Reinhardt</li>
+            <li>Doomfist</li>
+            <li>Junker Queen</li>
+            <li>Wrecking Ball</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Fortify when about to die</li>
+            <li>Spin forward through chokes</li>
+            <li>Terra Surge up close only</li>
+            <li>No coordination needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- D.VA -->
+    <div class="hero-card tank">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/dva/icon-portrait.png" alt="D.Va">
+        <div class="hero-info">
+          <h2>D.Va</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-s">S Tier</span>
+            <span class="comp-badge">Everything</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Defence Matrix is your #1 ability. It eats bullets, rockets, and ults. You're a bodyguard with jetpacks. Protect teammates first.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Kiriko</li>
+            <li>Tracer / Genji</li>
+            <li>Ashe</li>
+            <li>Ana / Zen</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Zarya</li>
+            <li>Symmetra</li>
+            <li>Mei</li>
+            <li>Reaper</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Pharah</li>
+            <li>Bastion</li>
+            <li>Zenyatta</li>
+            <li>Ashe</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Don't chase deep alone</li>
+            <li>Bomb in tight spaces only</li>
+            <li>Bump enemies off high ground</li>
+            <li>Always a safe pick</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== DPS ==================== -->
+<div id="dps" class="tab-content">
+  <div class="hero-grid">
+
+    <!-- VENDETTA -->
+    <div class="hero-card dps">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2158c4ef60904ca5/692f5b036da53018ad07b253/960_Vendetta.png" alt="Vendetta">
+        <div class="hero-info">
+          <h2>Vendetta</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-a">A Tier</span>
+            <span class="comp-badge">Dive / Melee DPS</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Commit fully or don't go in. Soaring Slice in, overhead swing for 130, Whirlwind Dash through, block with Warding Stance to survive. Build Onslaught stacks for speed.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Winston / D.Va (dive together)</li>
+            <li>Lucio (speed to close gap)</li>
+            <li>Ana (Nano-Vendetta is lethal)</li>
+            <li>Kiriko (Suzu saves your commit)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Ranged DPS (Ashe, Widow, Hanzo)</li>
+            <li>Pharah (can't reach her)</li>
+            <li>Sombra (hack strips mobility)</li>
+            <li>Coordinated focus fire</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Reinhardt (pierce barriers)</li>
+            <li>Sigma (sword ignores shield)</li>
+            <li>Grouped teams (Whirlwind AoE)</li>
+            <li>Melee heroes (Warding Stance)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Overhead swing = 130 dmg, always use it</li>
+            <li>Soaring Slice + Overhead = 180 burst</li>
+            <li>Block to survive, Projected Edge while blocking</li>
+            <li>Sundering Blade ignores ALL defences</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- REAPER -->
+    <div class="hero-card dps">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/reaper/icon-portrait.png" alt="Reaper">
+        <div class="hero-info">
+          <h2>Reaper</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">Brawl</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Wraith Form = ESCAPE, not engage. Walk into position, get kills, Wraith out. If you Wraith in, you're dead.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Zarya (Grav + Blossom)</li>
+            <li>Reinhardt</li>
+            <li>Lucio (speed boost)</li>
+            <li>Ana (Nano-Blossom)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Pharah</li>
+            <li>Widowmaker</li>
+            <li>Ana</li>
+            <li>Sombra</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Winston</li>
+            <li>Wrecking Ball</li>
+            <li>Doomfist</li>
+            <li>Zenyatta</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Shadow Step before fights</li>
+            <li>Tight corridors = your playground</li>
+            <li>Blossom from above (ledges)</li>
+            <li>Best low-rank climber</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASHE -->
+    <div class="hero-card dps">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/ashe/icon-portrait.png" alt="Ashe">
+        <div class="hero-info">
+          <h2>Ashe</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-s">S Tier</span>
+            <span class="comp-badge">Poke / Versatile</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">HIGH GROUND ALWAYS. If you're on the ground, you're wrong. ADS every shot. Dynamite is your best ability, not your gun.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Mercy (dmg boost)</li>
+            <li>Zenyatta (Discord)</li>
+            <li>D.Va</li>
+            <li>Ana</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Widowmaker</li>
+            <li>Winston / D.Va (dive)</li>
+            <li>Genji</li>
+            <li>Sombra</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Pharah</li>
+            <li>Echo</li>
+            <li>Bastion</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Dynamite mid-air detonate</li>
+            <li>Don't hold B.O.B., use him often</li>
+            <li>Coach Gun = only escape</li>
+            <li>ADS every single shot</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- BASTION -->
+    <div class="hero-card dps">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/bastion/icon-portrait.png" alt="Bastion">
+        <div class="hero-info">
+          <h2>Bastion</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-s">S Tier</span>
+            <span class="comp-badge">Bunker / Poke</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Stop sitting still. Use Assault mode to win a fight, then reposition. Recon mode gun is solid. Assault = finisher, not default.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Orisa</li>
+            <li>Sigma</li>
+            <li>Baptiste</li>
+            <li>Mercy (dmg boost)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Sombra (hardest counter)</li>
+            <li>D.Va (Matrix)</li>
+            <li>Genji (Deflect)</li>
+            <li>Tracer</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Reinhardt (barrier)</li>
+            <li>Orisa</li>
+            <li>Grouped teams (Artillery)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Reposition after every Assault</li>
+            <li>Sticky bomb for finishers</li>
+            <li>Artillery at fight START</li>
+            <li>Recon mode is good, use it</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== SUPPORTS ==================== -->
+<div id="supports" class="tab-content">
+  <div class="hero-grid">
+
+    <!-- MERCY -->
+    <div class="hero-card support">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/mercy/icon-portrait.png" alt="Mercy">
+        <div class="hero-info">
+          <h2>Mercy</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">DPS Pocket</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">DAMAGE BOOST > HEALING. If they're full HP, blue beam. Always. The #1 Mercy mistake is healing a full-health target.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Pharah (classic duo)</li>
+            <li>Ashe</li>
+            <li>Sojourn</li>
+            <li>Echo</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Winston / D.Va</li>
+            <li>Genji / Tracer</li>
+            <li>Roadhog (hook)</li>
+            <li>Sombra</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Enable</h4>
+          <ul class="hero-list">
+            <li>Any hitscan DPS</li>
+            <li>Rez negates enemy picks</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Learn super jump</li>
+            <li>Don't fly to dying allies</li>
+            <li>Safe rez or no rez</li>
+            <li>Valk at fight START</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUNO -->
+    <div class="hero-card support">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7e4477830e3fd772/668db075c02e3c1d615743f7/960_Juno_v2.jpg" alt="Juno">
+        <div class="hero-info">
+          <h2>Juno</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-a">A Tier</span>
+            <span class="comp-badge">Dive / Rush</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Hyper Ring is everything. Deploy it in front of your tank before the engage. Your gun can't headshot, so just land body shots.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Winston / D.Va</li>
+            <li>Genji / Tracer / Pharah</li>
+            <li>Lucio (double speed)</li>
+            <li>Kiriko</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Snipers (Widow/Ashe)</li>
+            <li>Winston / D.Va</li>
+            <li>Ana</li>
+            <li>Sombra</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Slow/brawl comps</li>
+            <li>Static defences/bunkers</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Ring BEFORE engage</li>
+            <li>Careful flying (vulnerable)</li>
+            <li>Pair with burst healer</li>
+            <li>Speed confuses low ranks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZENYATTA -->
+    <div class="hero-card support">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/zenyatta/icon-portrait.png" alt="Zenyatta">
+        <div class="hero-info">
+          <h2>Zenyatta</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">Poke</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Discord Orb > your damage. Keep it on whoever your team is shooting. Stay BEHIND your tank. Zero mobility = instant death if flanked.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Ashe / hitscan</li>
+            <li>D.Va (peel + combo)</li>
+            <li>Ana</li>
+            <li>Moira</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Winston</li>
+            <li>Tracer / Genji / Sombra</li>
+            <li>Venture</li>
+            <li>D.Va</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>All tanks (Discord)</li>
+            <li>Pharah (2-shot + Discord)</li>
+            <li>200hp heroes (volley)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Pre-charge volley around corners</li>
+            <li>Trans counters Blade/Blossom/Visor</li>
+            <li>Call out Discord targets</li>
+            <li>If you see Reaper's face, run</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOIRA -->
+    <div class="hero-card support">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/moira/icon-portrait.png" alt="Moira">
+        <div class="hero-info">
+          <h2>Moira</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">Brawl</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">HEAL FIRST, damage second. Use healing orbs in fights, not damage orbs. Fade = escape only. Never Fade forward into enemies.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Rein / Zarya</li>
+            <li>Reaper / Venture</li>
+            <li>Zenyatta</li>
+            <li>Lucio</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Ana (anti-nade)</li>
+            <li>Pharah / Junkrat</li>
+            <li>Long-range comps</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Genji</li>
+            <li>Tracer</li>
+            <li>Sombra (Fade cleanses)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Best low-rank climber</li>
+            <li>Damage recharges healing</li>
+            <li>Coal through team + enemies</li>
+            <li>Heal orb in tight rooms = huge</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANA -->
+    <div class="hero-card support">
+      <div class="hero-header">
+        <img class="hero-portrait" src="https://blzgdapipro-a.akamaihd.net/hero/ana/icon-portrait.png" alt="Ana">
+        <div class="hero-info">
+          <h2>Ana</h2>
+          <div class="hero-meta">
+            <span class="tier-badge tier-b">B Tier</span>
+            <span class="comp-badge">Everything</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-tip">Stay FAR back. Range is your advantage. Anti-nade into groups wins fights single-handedly. Don't Nano random people.</div>
+      <div class="hero-body">
+        <div class="hero-section sec-good">
+          <h4>Plays Well With</h4>
+          <ul class="hero-list">
+            <li>Genji (Nanoblade)</li>
+            <li>Winston (Nano-dive)</li>
+            <li>Zarya (Anti + Grav)</li>
+            <li>Rein / D.Va</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-bad">
+          <h4>Gets Countered By</h4>
+          <ul class="hero-list">
+            <li>Winston / D.Va (dive)</li>
+            <li>Tracer / Genji / Sombra</li>
+            <li>Venture</li>
+            <li>Widowmaker</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-you-counter">
+          <h4>You Counter</h4>
+          <ul class="hero-list">
+            <li>Roadhog (Sleep + Anti)</li>
+            <li>Any heal-dependent hero</li>
+            <li>B.O.B. (Sleep him)</li>
+          </ul>
+        </div>
+        <div class="hero-section sec-tips">
+          <h4>Quick Tips</h4>
+          <ul class="hero-list">
+            <li>Anti-nade into groups = win</li>
+            <li>Sleep flankers first (defensive)</li>
+            <li>Nano when they're IN the fight</li>
+            <li>Learn quickscope rhythm</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== SURVIVAL GUIDE ==================== -->
+<div id="tips" class="tab-content">
+  <h2 style="font-family:'Rajdhani',sans-serif; font-size:1.8em; text-align:center; color:#f89c1c; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">Bronze-Silver Survival Guide</h2>
+
+  <!-- GENERAL -->
+  <div style="background:linear-gradient(135deg,#1a2233,#131a26); border:1px solid #f89c1c44; border-radius:14px; padding:20px 24px; margin-bottom:24px;">
+    <h3 style="font-family:'Rajdhani',sans-serif; color:#f89c1c; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; font-size:1.2em;">General Rules</h3>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:10px;">
+      <div style="font-size:0.9em; color:#ccd; line-height:1.6;"><strong style="color:#fff;">Don't trickle.</strong> 3+ dead = fall back and regroup.</div>
+      <div style="font-size:0.9em; color:#ccd; line-height:1.6;"><strong style="color:#fff;">Focus fire.</strong> Shoot what your team shoots. One kill > spread damage.</div>
+      <div style="font-size:0.9em; color:#ccd; line-height:1.6;"><strong style="color:#fff;">Ults start fights.</strong> Don't waste them saving a lost fight.</div>
+      <div style="font-size:0.9em; color:#ccd; line-height:1.6;"><strong style="color:#fff;">Read the kill feed.</strong> 2 teammates dead = stop pushing.</div>
+    </div>
+  </div>
+
+  <!-- PER-HERO TIPS -->
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px,1fr)); gap:16px;">
+
+    <!-- Winston -->
+    <div style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/winston/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #4499ff44; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#4499ff; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Winston</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Always save Jump Pack for escape. No exit = don't jump in.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Target isolated supports, not the tank. Backline is your job.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Primal Rage is a survival tool, not just for boops. It refills your HP.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Drop bubble on top of the enemy support to trap them inside with you.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Orisa -->
+    <div style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/orisa/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #4499ff44; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#4499ff; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Orisa</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Fortify is your panic button. About to die? Press it. Enemies won't track the cooldown.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Javelin Spin + walk forward = push through any choke your team is stuck on.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Terra Surge up close only. Walk in first, then pull. Don't try max range.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">You don't need your team to coordinate. Just hold space and be a wall.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- D.Va -->
+    <div style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/dva/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #4499ff44; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#4499ff; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">D.Va</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Matrix is your #1 ability. Eat ults (Grav, Dynamite, rockets). Protect teammates first.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Don't chase kills deep. Your team won't follow. You'll lose mech and feed.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Self-Destruct only works in tight spaces or combos (Grav, Shatter, small rooms).</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Bump enemies off high ground with boosters. Contest every angle.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vendetta -->
+    <div style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2158c4ef60904ca5/692f5b036da53018ad07b253/960_Vendetta.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #ff665544; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#ff6655; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Vendetta</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Commit fully or don't go. Soaring Slice in, overhead for 130, Whirlwind out or block.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Overhead swing is your bread and butter. 130 damage, pierces barriers, crits on tanks.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Warding Stance = 75% damage reduction. Block proactively, not reactively.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Build Onslaught stacks (hit enemies = faster attacks + movement). Stay aggressive to stay fast.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Reaper -->
+    <div style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/reaper/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #ff665544; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#ff6655; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Reaper</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Wraith Form = ESCAPE ONLY. Walk into position. Get kills. Wraith out. Never Wraith in.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Shadow Step to flanks BEFORE fights start. The animation is a death sentence mid-fight.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Death Blossom from above (drop off a ledge). Low rank players never look up.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Tight corridors = your playground. Open maps = consider switching hero.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Ashe -->
+    <div style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/ashe/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #ff665544; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#ff6655; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Ashe</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">HIGH GROUND ALWAYS. On the ground = wrong position. Get up there.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">ADS every shot. Hip-fire is panic-only. The damage difference is massive.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Dynamite mid-air detonate into groups. Even missed shots deal huge burn.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Coach Gun is your ONLY escape. Save it for divers (Winston/D.Va).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bastion -->
+    <div style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/bastion/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #ff665544; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#ff6655; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Bastion</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">STOP SITTING STILL. Assault mode to win the fight, then move to a new spot.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Recon mode gun is solid at mid-range. Use it. Assault is a finisher, not your default.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Artillery (ult) at the START of fights. Three shots on grouped enemies = fight won.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Low rank enemies walk the same path repeatedly. Exploit it, then reposition.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Mercy -->
+    <div style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/mercy/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #44dd7744; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#44dd77; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Mercy</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">BLUE BEAM > YELLOW BEAM. Full HP target = damage boost. Always. This is the #1 mistake.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Learn super jump. It's the difference between dying constantly and being unkillable.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Don't fly to dying allies in bad positions. You'll die too. Let them go.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Safe rez or NO rez. Dead Mercy is worse than a dead teammate staying dead.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Juno -->
+    <div style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7e4477830e3fd772/668db075c02e3c1d615743f7/960_Juno_v2.jpg" style="width:56px; height:56px; border-radius:10px; border:2px solid #44dd7744; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#44dd77; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Juno</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Hyper Ring BEFORE your team engages. Deploy in front of your tank.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Your gun can't headshot. Don't flick for heads, just land consistent body shots.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Flying for Torpedoes makes you vulnerable. Only fly when safe.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Speed boost alone confuses low rank enemies. Use it aggressively to overwhelm.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Zenyatta -->
+    <div style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/zenyatta/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #44dd7744; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#44dd77; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Zenyatta</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Discord Orb > your damage output. Keep it on whoever your team is shooting.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Stay FAR behind your tank. Zero mobility = instant death if flanked.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Pre-charge volley (right-click) around corners. Release on first enemy you see.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Save Transcendence for enemy ults: Blade, Blossom, Visor. Don't waste it casually.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Moira -->
+    <div style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/moira/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #44dd7744; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#44dd77; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Moira</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">HEAL FIRST. Healing orbs in fights, not damage orbs. That's the #1 DPS Moira mistake.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Fade = escape ONLY. Never Fade forward into enemies. You will die every time.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Damage beam recharges healing juice. Weave damage in between heals.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Coalescence goes through allies AND enemies. Aim through your team into theirs.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Ana -->
+    <div style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544; border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+      <img src="https://blzgdapipro-a.akamaihd.net/hero/ana/icon-portrait.png" style="width:56px; height:56px; border-radius:10px; border:2px solid #44dd7744; flex-shrink:0;">
+      <div>
+        <h4 style="font-family:'Rajdhani',sans-serif; color:#44dd77; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Ana</h4>
+        <ul style="list-style:none; font-size:0.85em; color:#aabbcc; line-height:1.8;">
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Stay FAR back. Range is your superpower. Next to Rein = too close.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Anti-nade into groups during fights = instant fight winner. Splash is forgiving.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px; margin-bottom:4px;">Sleep Dart: defensive first (flankers on you), offensive second.</li>
+          <li style="border-left:2px solid #f89c1c; padding-left:8px;">Nano the person IN the fight, not random backliners. Nano-Rein swinging = good. Nano-Widow = bad.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== WHEN TO SWAP ==================== -->
+<div id="swaps" class="tab-content">
+  <div style="text-align:center; margin-bottom:24px;">
+    <p style="color:#667; font-size:0.9em;">Quick decision trees for your hero pool. If you're struggling, check here.</p>
+  </div>
+
+  <div class="comp-grid">
+    <!-- TANK SWAPS -->
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44;">
+      <h2 style="color:#4499ff;">D.Va</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy has Zarya (bubbles eat your damage, you feed her charge)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">You keep getting de-meched before fights start (too much focus fire)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Winston if they have squishy backline. Orisa if you need to just survive.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44;">
+      <h2 style="color:#4499ff;">Winston</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy has Reaper or Bastion (they melt you before you can escape)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your team won't follow up on your dives (you keep dying alone)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">D.Va for safer engage. Orisa if they have heavy brawl/close range.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44;">
+      <h2 style="color:#4499ff;">Orisa</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy keeps playing at range and poking you out (you can't close distance)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Mobile heroes are flanking your backline and you can't peel for them</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">D.Va for mobility + peel. Winston if you need to contest high ground.</div>
+      </div>
+    </div>
+
+    <!-- DPS SWAPS -->
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Vendetta</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy stacks CC and stuns (you get stunned before you can deal damage)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">They play very spread out (you can't close the gap safely)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Ashe for ranged poke. Reaper if they group up (you still want close range).</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Reaper</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy plays poke/range and you can't get close (Ashe, Widow, Hanzo)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">They have Pharah and your team has no other hitscan to deal with her</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Ashe to match their range. Bastion if they have big tanks to shred.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Ashe</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Dive heroes keep jumping you and you can't Coach Gun away fast enough</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy has multiple shields blocking your sightlines constantly</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Reaper for close-range brawl. Bastion to shred their barriers.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Bastion</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Flankers keep finding you (Genji, Tracer, Sombra eating you alive)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your team is playing dive and you're left alone with no peel</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Ashe for mobile hitscan. Reaper if you're getting dived (self-heal + burst).</div>
+      </div>
+    </div>
+
+    <!-- SUPPORT SWAPS -->
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Mercy</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your other support can't solo heal (your team is dying too fast)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">No one on your team is getting value from damage boost (no carry DPS)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Moira for raw heals. Ana for anti-nade + more healing output.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Juno</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your team plays slow/passive and nobody uses your speed boost</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">You keep dying to flankers (Juno has limited self-peel)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Moira for survivability. Zen for damage if your team can protect you.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Zenyatta</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Dive heroes keep killing you first every fight (Tracer, Genji, Winston)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your team needs more raw healing and you can't keep up</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Moira (hard to kill, great heals). Ana if you can hit sleeps on flankers.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Moira</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Your team needs utility (anti-heal, discord, damage boost) not just raw heals</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Enemy has lots of range and your team is playing poke (Moira wants close)</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Ana for utility + range. Zen if you need damage amplification.</div>
+      </div>
+    </div>
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Ana</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#ff5555;">Swap OFF if:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">You keep missing shots and your team is dying (aim is off today)</div>
+        <div style="padding-left:12px; border-left:2px solid #ff555555; margin-bottom:6px;">Flankers keep killing you and you can't hit sleep dart</div>
+        <div style="margin-bottom:8px; margin-top:12px;"><strong style="color:#44dd77;">Swap TO:</strong></div>
+        <div style="padding-left:12px; border-left:2px solid #44dd7755;">Moira (no-aim heals, survivable). Mercy if a DPS is carrying.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ULT COMBOS ==================== -->
+<div id="ultcombos" class="tab-content">
+  <div style="text-align:center; margin-bottom:24px;">
+    <p style="color:#667; font-size:0.9em;">Ultimate combos from your hero pool. Coordinate these with your team for easy team wipes.</p>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Nano + Death Blossom</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Ana + Reaper</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">The classic.</strong> Ana Nano-Boosts Reaper, he Shadow Steps or Wraith Forms in and pops Death Blossom. 50% more damage + 50% less damage taken = near-guaranteed team wipe if they're grouped.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Wait for enemy support cooldowns (Suzu, Immortality) before committing.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Nano + B.O.B.</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Ana + Ashe</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Nano the robot.</strong> Yes, you can Nano B.O.B. He becomes an unkillable turret dealing massive damage. Forces the enemy team to either scatter or die.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Deploy B.O.B. first so Ana can see him, then she Nanos him. Works even when Ana is far away.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Self-Destruct + Primal Rage</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">D.Va + Winston</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Zone + scatter.</strong> D.Va throws her mech, Winston goes Primal and knocks enemies INTO the explosion radius. Even if the bomb doesn't kill, Winston finishes them while they scatter.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Winston Primal just before the bomb goes off, knock enemies away from cover.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Discord + Bastion Config</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Zenyatta + Bastion</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Delete button.</strong> Discord Orb on the tank while Bastion is in Assault Config. The 25% damage amp on Bastion's already insane DPS melts anything instantly. Not an ult combo, but deadly at all times.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Discord the tank first, then swap Discord to supports once the tank drops.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Anti-Nade + Coalescence</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Ana + Moira</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">No healing allowed.</strong> Ana throws Anti-Nade onto grouped enemies, then Moira beams through them with Coalescence. They can't be healed, and Moira's beam does damage + heals your team simultaneously.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Best into brawl comps where enemies clump together. Anti first, then Coalescence.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Damage Boost + Configuration</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Mercy + Bastion</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Turret on steroids.</strong> Mercy damage-boosts Bastion in Assault Config. Combined with his already high DPS, this shreds tanks in seconds and melts barriers like butter. Works without ults.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Stay behind cover. If Bastion gets focused, swap to healing beam, then back to boost.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Trans + Death Blossom</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Zenyatta + Reaper (Defensive)</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Aggressive Transcendence.</strong> Zen pops Trans and runs INTO the enemy with Reaper. Reaper Death Blossoms while Zen heals through all incoming damage. The enemy has to burst through Trans healing to kill Reaper.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Watch for Ana anti-nade. If enemies have Ana, bait the nade first.
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#2a1a1a,#1a1130); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">Supercharger + Artillery</h2>
+      <div style="font-size:0.85em; color:#8899aa; margin-bottom:8px;">Orisa + Bastion</div>
+      <p style="font-size:0.9em; color:#ccd; line-height:1.6;">
+        <strong style="color:#fff;">Maximum firepower.</strong> Orisa drops Supercharger for team damage boost while Bastion rains Artillery shells. The boosted Artillery shots deal devastating damage across the map.
+      </p>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Tip:</strong> Place Supercharger behind cover so enemies can't destroy it quickly.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAP TIPS ==================== -->
+<div id="maps" class="tab-content">
+  <div style="text-align:center; margin-bottom:24px;">
+    <p style="color:#667; font-size:0.9em;">Which of your heroes work best on different map types. Pick based on the map, not just comfort.</p>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card comp-dive">
+      <h2 style="color:#4499ff;">Control Maps</h2>
+      <p class="analogy">"King of the hill. Fights are fast and reset often."</p>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><span class="role-tag tag-tank" style="font-size:0.8em;">Tank</span> <strong style="color:#fff;">D.Va</strong> (always good), <strong style="color:#fff;">Winston</strong> (high ground maps like Busan)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-dps" style="font-size:0.8em;">DPS</span> <strong style="color:#fff;">Reaper</strong> (tight points), <strong style="color:#fff;">Vendetta</strong> (close-quarters maps)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-sup" style="font-size:0.8em;">Sup</span> <strong style="color:#fff;">Moira</strong> (sustain on point), <strong style="color:#fff;">Juno</strong> (speed to contest)</div>
+      </div>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Key maps:</strong> Busan, Ilios, Lijiang Tower, Nepal, Oasis, Antarctic Peninsula, Samoa
+      </div>
+    </div>
+
+    <div class="comp-card comp-poke">
+      <h2 style="color:#44dd77;">Escort / Payload</h2>
+      <p class="analogy">"Push the cart. Long sightlines, multiple checkpoints."</p>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><span class="role-tag tag-tank" style="font-size:0.8em;">Tank</span> <strong style="color:#fff;">D.Va</strong> (peel for team), <strong style="color:#fff;">Orisa</strong> (sit on cart with Fortify)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-dps" style="font-size:0.8em;">DPS</span> <strong style="color:#fff;">Ashe</strong> (long sightlines), <strong style="color:#fff;">Bastion</strong> (ride the cart + turret)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-sup" style="font-size:0.8em;">Sup</span> <strong style="color:#fff;">Ana</strong> (sightlines for heals), <strong style="color:#fff;">Mercy</strong> (boost Ashe/Bastion)</div>
+      </div>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Key maps:</strong> Dorado, Havana, Junkertown, Circuit Royal, Rialto, Route 66
+      </div>
+    </div>
+
+    <div class="comp-card comp-brawl">
+      <h2 style="color:#ff4444;">Hybrid</h2>
+      <p class="analogy">"Capture first, then escort. Point fights are brawly, then it opens up."</p>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><span class="role-tag tag-tank" style="font-size:0.8em;">Tank</span> <strong style="color:#fff;">D.Va</strong> (flex between phases), <strong style="color:#fff;">Winston</strong> (first point dives)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-dps" style="font-size:0.8em;">DPS</span> <strong style="color:#fff;">Vendetta</strong> (first point brawl), then swap <strong style="color:#fff;">Ashe</strong> (escort phase sightlines)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-sup" style="font-size:0.8em;">Sup</span> <strong style="color:#fff;">Ana</strong> (always valuable), <strong style="color:#fff;">Moira</strong> (point capture sustain)</div>
+      </div>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Key maps:</strong> King's Row, Blizzard World, Eichenwalde, Hollywood, Midtown, Numbani, Paraiso
+      </div>
+    </div>
+
+    <div class="comp-card comp-rush">
+      <h2 style="color:#aa77ee;">Push</h2>
+      <p class="analogy">"Race for the robot. Long rotations, fight for mid control."</p>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><span class="role-tag tag-tank" style="font-size:0.8em;">Tank</span> <strong style="color:#fff;">Winston</strong> (fast rotations, high ground), <strong style="color:#fff;">D.Va</strong> (always safe)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-dps" style="font-size:0.8em;">DPS</span> <strong style="color:#fff;">Ashe</strong> (long sightlines), <strong style="color:#fff;">Vendetta</strong> (tight corridors)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-sup" style="font-size:0.8em;">Sup</span> <strong style="color:#fff;">Juno</strong> (speed for rotations), <strong style="color:#fff;">Zen</strong> (discord from distance)</div>
+      </div>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Key maps:</strong> Colosseo, Esperanca, New Queen Street, Runasapi
+      </div>
+    </div>
+
+    <div class="comp-card comp-bunker">
+      <h2 style="color:#ddcc44;">Flashpoint</h2>
+      <p class="analogy">"Random capture points. Adaptability wins."</p>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><span class="role-tag tag-tank" style="font-size:0.8em;">Tank</span> <strong style="color:#fff;">D.Va</strong> (best flex for random points), <strong style="color:#fff;">Winston</strong> (speed to rotate)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-dps" style="font-size:0.8em;">DPS</span> <strong style="color:#fff;">Ashe</strong> (works everywhere), <strong style="color:#fff;">Bastion</strong> (hold the point once captured)</div>
+        <div style="margin-bottom:6px;"><span class="role-tag tag-sup" style="font-size:0.8em;">Sup</span> <strong style="color:#fff;">Ana</strong> (flexible), <strong style="color:#fff;">Juno</strong> (fast rotations between points)</div>
+      </div>
+      <div style="margin-top:10px; padding:8px 12px; background:#ffffff08; border-radius:8px; font-size:0.82em; color:#aab;">
+        <strong style="color:#f89c1c;">Key maps:</strong> New Junk City, Suravasa, Throne of Anubis
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2233,#131a26); border:1px solid #f89c1c44;">
+      <h2 style="color:#f89c1c;">General Rule of Thumb</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:6px;"><strong style="color:#fff;">Open maps</strong> (long sightlines) = Ashe, Bastion, Ana, Zen</div>
+        <div style="margin-bottom:6px;"><strong style="color:#fff;">Tight maps</strong> (close quarters) = Reaper, Vendetta, Moira, D.Va</div>
+        <div style="margin-bottom:6px;"><strong style="color:#fff;">Vertical maps</strong> (high ground) = Winston, D.Va, Ashe, Mercy</div>
+        <div style="margin-bottom:6px;"><strong style="color:#fff;">When unsure</strong> = D.Va + Ashe + Ana (safe default combo)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== COUNTERS ==================== -->
+<div id="counters" class="tab-content">
+  <div style="text-align:center; margin-bottom:24px;">
+    <p style="color:#667; font-size:0.9em;">Quick reference: who on your roster counters what, and what counters you.</p>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44;">
+      <h2 style="color:#4499ff;">D.Va Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Pharah (fly up + shoot her down)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Widowmaker (dive her, Matrix her shots)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Bastion (Matrix eats his entire output)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Zarya (bubbles feed from your Matrix shots)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Symmetra (beam ignores Matrix)</div>
+        <div style="padding-left:12px;">Reaper (close range shreds your mech)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a2a4a,#111a2e); border:1px solid #2266bb44;">
+      <h2 style="color:#4499ff;">Winston Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Widowmaker (jump on her, she can't escape)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Hanzo (dive him, he struggles up close)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Zenyatta (he's free food if he's alone)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Reaper (melts you at close range)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Bastion (shreds through your HP pool)</div>
+        <div style="padding-left:12px;">Ana (sleep dart + anti-nade shuts you down)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Vendetta Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Supports (burst them before they react)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Widowmaker (close distance, she's helpless)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Bastion (flank and burst from behind)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Reaper (out-trades you close range)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Brigitte (stun + armour shuts down your burst)</div>
+        <div style="padding-left:12px;">Cassidy (Magnetic Grenade + headshot kills you)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Reaper Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Winston (melt him at close range)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Reinhardt (walk up and shoot his face)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Roadhog (self-heal through his damage)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Ashe (outranges you completely)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Pharah (can't touch her in the sky)</div>
+        <div style="padding-left:12px;">Ana (sleep dart stops Death Blossom)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Ashe Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Pharah (hitscan shuts her down)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Junkrat (outrange his spam easily)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Echo (hitscan vs. flying target)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Tracer (too fast, too close)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Genji (deflects your shots, dives you)</div>
+        <div style="padding-left:12px;">D.Va (Matrix eats everything, dives you)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#3a1a1a,#2e1115); border:1px solid #bb333344;">
+      <h2 style="color:#ff6655;">Bastion Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Reinhardt (shred his shield, then him)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Orisa (out-DPS her Fortify)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Roadhog (melt him before he heals)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Genji (deflects your turret fire back)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Sombra (hacks you out of Config, you're helpless)</div>
+        <div style="padding-left:12px;">Tracer (flanks you, Pulse Bomb one-shots)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Ana Matchups</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">You counter:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Roadhog (anti-nade stops his self-heal = dead hog)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Reinhardt (sleep his charge, anti his team)</div>
+        <div style="padding-left:12px; margin-bottom:10px;">Any grouped team (anti-nade is devastating)</div>
+        <div><strong style="color:#ff5555;">Counters you:</strong></div>
+        <div style="padding-left:12px; margin-bottom:4px;">Tracer (too fast to hit, blinks past your sleep)</div>
+        <div style="padding-left:12px; margin-bottom:4px;">Genji (dives you, deflects your nade)</div>
+        <div style="padding-left:12px;">Winston (jumps on you, bubble blocks your heals)</div>
+      </div>
+    </div>
+
+    <div class="comp-card" style="background:linear-gradient(135deg,#1a3a2a,#112e1a); border:1px solid #33aa5544;">
+      <h2 style="color:#44dd77;">Zen / Mercy / Moira / Juno</h2>
+      <div style="font-size:0.88em; color:#ccd; line-height:1.8;">
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">Zen counters:</strong> Tanks (Discord melts them). <span style="color:#ff5555;">Weak to:</span> Any diver.</div>
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">Mercy counters:</strong> Nothing directly. <span style="color:#ff5555;">Weak to:</span> Sombra, Tracer (she can't fight back).</div>
+        <div style="margin-bottom:8px;"><strong style="color:#44dd77;">Moira counters:</strong> Genji (auto-aim goes through deflect), Tracer (Orbs track her). <span style="color:#ff5555;">Weak to:</span> Anyone with range.</div>
+        <div><strong style="color:#44dd77;">Juno counters:</strong> Slow comps (speed past them). <span style="color:#ff5555;">Weak to:</span> Dive assassins.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showSubTab(showId, hideId, btn) {
+  document.getElementById(showId).style.display = 'block';
+  document.getElementById(hideId).style.display = 'none';
+  btn.parentElement.querySelectorAll('button').forEach(function(b) {
+    b.style.background = '#131a26';
+    b.style.color = '#8899aa';
+    b.style.borderColor = '#2a3444';
+  });
+  btn.style.background = '#f89c1c';
+  btn.style.color = '#0a0e17';
+  btn.style.borderColor = '#f89c1c';
+}
+
+function filterRole(role, btn) {
+  var heroes = document.querySelectorAll('#all-heroes .th');
+  heroes.forEach(function(h) {
+    if (role === 'all') { h.style.display = 'flex'; }
+    else { h.style.display = h.classList.contains(role) ? 'flex' : 'none'; }
+  });
+  btn.parentElement.querySelectorAll('button').forEach(function(b) {
+    b.classList.remove('active');
+    b.style.fontWeight = '600';
+  });
+  btn.classList.add('active');
+  btn.style.fontWeight = '700';
+}
+
+// Fix images that fail to load - show placeholder with initials
+document.querySelectorAll('img').forEach(function(img) {
+  img.onerror = function() {
+    this.style.display = 'none';
+    var placeholder = document.createElement('div');
+    placeholder.style.cssText = 'width:72px;height:72px;border-radius:12px;background:#1a2233;border:2px solid #2a3444;display:flex;align-items:center;justify-content:center;font-family:Rajdhani,sans-serif;font-weight:700;font-size:1.4em;color:#667;';
+    placeholder.textContent = '?';
+    this.parentNode.insertBefore(placeholder, this);
+  };
+});
+</script>
+
+</body>
+</html>
