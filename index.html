@@ -389,6 +389,9 @@
   }
   .tier-star.active { color: #f89c1c; }
 
+  /* Collapse chevron: hidden on desktop */
+  .card-chevron { display: none; }
+
   /* MOBILE */
   @media (max-width: 600px) {
     body { padding: 8px; }
@@ -451,6 +454,24 @@
     .tier-letter { width: 38px !important; font-size: 1.3em !important; padding: 6px 0 !important; }
     .tier-label { font-size: 0.9em !important; }
     .tier-row { padding-left: 0 !important; gap: 10px !important; justify-content: center; }
+
+    /* Collapsible hero cards on mobile */
+    .card-chevron {
+      display: block;
+      font-size: 0.7em;
+      color: #667;
+      margin-left: auto;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      padding: 4px;
+    }
+    .hero-card.open .card-chevron { transform: rotate(180deg); }
+    .hero-header { cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .card-detail {
+      display: none;
+      overflow: hidden;
+    }
+    .hero-card.open .card-detail { display: block; }
   }
 
   /* PRINT */
@@ -1621,18 +1642,21 @@ function renderHeroCard(hero) {
 
   var html = '<div class="hero-card ' + roleClass + '">';
   html += '<button class="' + starClass + '" onclick="toggleMyHero(\'' + hero.id + '\',event)" title="Toggle My Heroes">' + (my ? '\u2605' : '\u2606') + '</button>';
-  html += '<div class="hero-header">';
+  html += '<div class="hero-header" onclick="toggleCard(this)">';
   html += '<img class="hero-portrait" src="' + hero.portrait + '" alt="' + hero.name + '" onerror="this.style.display=\'none\'">';
   html += '<div class="hero-info"><h2>' + hero.name + '</h2>';
   html += '<div class="hero-meta"><span class="tier-badge ' + tierClass + '">' + hero.tier + ' Tier</span>';
-  html += '<span class="comp-badge">' + hero.comp + '</span></div></div></div>';
+  html += '<span class="comp-badge">' + hero.comp + '</span></div></div>';
+  html += '<span class="card-chevron">\u25BC</span>';
+  html += '</div>';
+  html += '<div class="card-detail">';
   html += '<div class="hero-tip">' + hero.keyTip + '</div>';
   html += '<div class="hero-body">';
   html += '<div class="hero-section sec-good"><h4>Plays Well With</h4><ul class="hero-list">' + hero.synergies.map(function(s){return '<li>'+s+'</li>';}).join('') + '</ul></div>';
   html += '<div class="hero-section sec-bad"><h4>Gets Countered By</h4><ul class="hero-list">' + hero.counters.map(function(s){return '<li>'+s+'</li>';}).join('') + '</ul></div>';
   html += '<div class="hero-section sec-you-counter"><h4>You Counter</h4><ul class="hero-list">' + hero.youCounter.map(function(s){return '<li>'+s+'</li>';}).join('') + '</ul></div>';
   html += '<div class="hero-section sec-tips"><h4>Quick Tips</h4><ul class="hero-list">' + hero.tips.map(function(s){return '<li>'+s+'</li>';}).join('') + '</ul></div>';
-  html += '</div></div>';
+  html += '</div></div></div>';
   return html;
 }
 
@@ -1779,6 +1803,13 @@ function renderAll() {
   renderTierList();
   renderRoleTabs();
   renderSurvivalGuide();
+}
+
+// Toggle card collapse (mobile only)
+function toggleCard(headerEl) {
+  if (window.innerWidth > 600) return;
+  var card = headerEl.closest('.hero-card');
+  if (card) card.classList.toggle('open');
 }
 
 // Tab switching
